@@ -57,6 +57,6 @@ void loop() {
     }
     delay(10);  // short delay between samples
   }
-  Serial.print("Range:");
+  Serial.print("MeasuredRange:");
   Serial.println ((float)rangeSum / cnt);
 }
