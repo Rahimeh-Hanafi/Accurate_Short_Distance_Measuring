@@ -11,8 +11,8 @@
 #define SHT_LOX1 10
 #define SHT_LOX2 11
 #define SHT_LOX3 12
-#define SHT_LOX4 13
-#define SHT_LOX5 14
+#define SHT_LOX4 15
+#define SHT_LOX5 16
 
 // Optional define GPIO pins to check to see if complete
 #define GPIO_LOX1 3
@@ -21,6 +21,7 @@
 #define GPIO_LOX4 6
 #define GPIO_LOX5 7
 
+// Debug timing pin (oscilloscope / logic analyzer)
 #define TIMING_PIN 13
 
 // objects for the VL6180X
@@ -77,11 +78,15 @@ void setID() {
   delay(10);
 
   // activating LOX1 and reseting LOX2
-  digitalWrite(SHT_LOX1, HIGH);
+  digitalWrite(SHT_LOX1, LOW);
   digitalWrite(SHT_LOX2, LOW);
   digitalWrite(SHT_LOX3, LOW);
   digitalWrite(SHT_LOX4, LOW);
   digitalWrite(SHT_LOX5, LOW);
+  delay(10);
+
+  digitalWrite(SHT_LOX1, HIGH);
+  delay(10);
 
   // initing LOX1
   if (!lox1.begin()) {
@@ -134,13 +139,20 @@ void setID() {
     while (1);
   }
   lox5.setAddress(LOX5_ADDRESS);
+
+  Serial.print("LOX1 I2C Addr: "); Serial.println(lox1.getAddress(), HEX);
+  Serial.print("LOX2 I2C Addr: "); Serial.println(lox2.getAddress(), HEX);
+  Serial.print("LOX3 I2C Addr: "); Serial.println(lox3.getAddress(), HEX);
+  Serial.print("LOX4 I2C Addr: "); Serial.println(lox4.getAddress(), HEX);
+  Serial.print("LOX5 I2C Addr: "); Serial.println(lox5.getAddress(), HEX);
+
 }
 
 uint8_t readSensor(Adafruit_VL6180X &vl) {
   // Serial.print("Addr:");
   // Serial.println(vl.getAddress(), HEX);
 
-  float lux = vl.readLux(VL6180X_ALS_GAIN_5);
+  // float lux = vl.readLux(VL6180X_ALS_GAIN_5);
   // Serial.print("Lux:"); Serial.println(lux);
   uint8_t range = vl.readRange();
   uint8_t status = vl.readRangeStatus();
@@ -151,36 +163,36 @@ uint8_t readSensor(Adafruit_VL6180X &vl) {
   }
 
   // Some error occurred, print it out!
-else {
+  else {
 
-  if  ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5)) {
-    Serial.print("(System error)");
-  }
-  else if (status == VL6180X_ERROR_ECEFAIL) {
-    Serial.print("(ECE failure)");
-  }
-  else if (status == VL6180X_ERROR_NOCONVERGE) {
-    Serial.print("(No convergence)");
-  }
-  else if (status == VL6180X_ERROR_RANGEIGNORE) {
-    Serial.print("(Ignoring range)");
-  }
-  else if (status == VL6180X_ERROR_SNR) {
-    Serial.print("Signal/Noise error");
-  }
-  else if (status == VL6180X_ERROR_RAWUFLOW) {
-    Serial.print("Raw reading underflow");
-  }
-  else if (status == VL6180X_ERROR_RAWOFLOW) {
-    Serial.print("Raw reading overflow");
-  }
-  else if (status == VL6180X_ERROR_RANGEUFLOW) {
-    Serial.print("Range reading underflow");
-  }
-  else if (status == VL6180X_ERROR_RANGEOFLOW) {
-    Serial.print("Range reading overflow");
-  }
-  return -1;
+    if  ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5)) {
+      Serial.print("(System error)");
+    }
+    else if (status == VL6180X_ERROR_ECEFAIL) {
+      Serial.print("(ECE failure)");
+    }
+    else if (status == VL6180X_ERROR_NOCONVERGE) {
+      Serial.print("(No convergence)");
+    }
+    else if (status == VL6180X_ERROR_RANGEIGNORE) {
+      Serial.print("(Ignoring range)");
+    }
+    else if (status == VL6180X_ERROR_SNR) {
+      Serial.print("Signal/Noise error");
+    }
+    else if (status == VL6180X_ERROR_RAWUFLOW) {
+      Serial.print("Raw reading underflow");
+    }
+    else if (status == VL6180X_ERROR_RAWOFLOW) {
+      Serial.print("Raw reading overflow");
+    }
+    else if (status == VL6180X_ERROR_RANGEUFLOW) {
+      Serial.print("Range reading underflow");
+    }
+    else if (status == VL6180X_ERROR_RANGEOFLOW) {
+      Serial.print("Range reading overflow");
+    }
+    return -1;
   }
 
 }
