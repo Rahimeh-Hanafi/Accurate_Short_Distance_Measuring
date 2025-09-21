@@ -30,6 +30,7 @@ void loop() {
   long rangeSum = 0;
   for (int i = 0; i < samples; i++) {
     uint8_t range = vl.readRange();
+    Serial.print("raw_range:"); Serial.println(range);
     uint8_t status = vl.readRangeStatus();
     if (status == VL6180X_ERROR_NONE) {
 
